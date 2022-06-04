@@ -1,0 +1,152 @@
+#define MotorL1 8
+#define MotorL2 7
+#define MotorLE 3 
+
+#define MotorR1 12
+#define MotorR2 13
+#define MotorRE 9
+
+#define echoPin A1
+#define trigPin A2
+
+#define echoPin2 A3
+#define trigPin2 A0
+
+
+void setup() {
+  pinMode(MotorL1, OUTPUT);
+  pinMode(MotorL2, OUTPUT);
+  pinMode(MotorLE, OUTPUT);
+  pinMode(MotorR1, OUTPUT);
+  pinMode(MotorR2, OUTPUT);
+  pinMode(MotorRE, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+  Serial.begin(9600);
+
+}
+
+void loop() {
+  
+  long FrontDistance,FrontDuration,RightDistance,RightDuration;
+  
+// Front sensor
+  digitalWrite(trigPin,LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  FrontDuration = pulseIn(echoPin, HIGH);
+  FrontDistance = (FrontDuration/2) / 28.5;
+  Serial.print("Front:");
+  Serial.println(FrontDistance);
+
+  
+// Right sensor
+  digitalWrite(trigPin2,LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin2, LOW);
+  RightDuration = pulseIn(echoPin2, HIGH);
+  RightDistance = (RightDuration/2) / 28.5;
+  Serial.print("Right:");
+  Serial.println(RightDistance);
+
+
+if (RightDistance>=30 && FrontDistance>=10 ){
+    stp();
+    delay(200);
+    rightside();
+    delay(75);
+    forwardside();
+    delay(350);
+    }
+  else if (RightDistance<20 && FrontDistance<20 && RightDistance>=10 && FrontDistance>=10){
+    stp();
+    delay(200);
+    leftside();
+    delay(150);
+    forwardside();
+    delay(200);
+    }
+   else if (RightDistance<10 && FrontDistance>20){
+    stp();
+    delay(150);
+    leftside();
+    delay(100);
+    forwardside();
+    delay(200);
+    }
+  else if (FrontDistance<10){
+    stp();
+    backside();
+    delay(150);
+    leftside();
+    delay(150);
+    }  
+  else {
+    forwardside();
+    delay(20);
+  }
+}
+
+  
+void leftside(){ 
+  
+  digitalWrite(MotorR1, HIGH);
+  digitalWrite(MotorR2, LOW);
+  analogWrite(MotorRE, 170);
+  digitalWrite(MotorL1, LOW);
+  digitalWrite(MotorL2, HIGH);
+  analogWrite(MotorLE, 170);
+  
+  
+}
+
+void forwardside(){ 
+  
+  digitalWrite(MotorR1, HIGH);
+  digitalWrite(MotorR2, LOW);
+  analogWrite(MotorRE, 180);
+  digitalWrite(MotorL1, HIGH);
+  digitalWrite(MotorL2, LOW);
+  analogWrite(MotorLE, 180);
+  
+  
+}
+
+void rightside(){
+  
+  digitalWrite(MotorR1, LOW);
+  digitalWrite(MotorR2, HIGH);
+  analogWrite(MotorRE, 180);
+  digitalWrite(MotorL1, HIGH);
+  digitalWrite(MotorL2, LOW);
+  analogWrite(MotorLE, 180);
+  
+  
+}
+
+void backside(){
+  
+  digitalWrite(MotorR1, LOW);
+  digitalWrite(MotorR2, HIGH);
+  analogWrite(MotorRE, 180);
+  digitalWrite(MotorL1, LOW);
+  digitalWrite(MotorL2, HIGH);
+  analogWrite(MotorLE, 180);
+     
+}
+
+void stp(){
+  
+  digitalWrite(MotorR1, LOW);
+  digitalWrite(MotorR2, LOW);
+  analogWrite(MotorRE, 0);
+  digitalWrite(MotorL1, LOW);
+  digitalWrite(MotorL2, LOW);
+  analogWrite(MotorLE, 0);
+}
